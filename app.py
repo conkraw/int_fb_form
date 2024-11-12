@@ -9,6 +9,37 @@ from io import BytesIO
 # Title of the application
 st.title("ETI Performance Evaluation Form")
 
+def send_email_with_attachment(to_emails, subject, body, file_path):
+    from_email = st.secrets["general"]["email"]
+    password = st.secrets["general"]["email_password"]
+
+    # Create a multipart email message
+    msg = MIMEMultipart()
+    msg['From'] = from_email
+    msg['To'] = ', '.join(to_emails)  # Join multiple email addresses
+    msg['Subject'] = subject
+
+    # Attach the email body (in HTML or plain text format)
+    msg.attach(MIMEText(body, 'html'))  # 'html' or 'plain' depending on the content
+
+    # Attach the Word document
+    with open(file_path, 'rb') as attachment:
+        part = MIMEBase('application', 'octet-stream')
+        part.set_payload(attachment.read())
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', f'attachment; filename={file_path.split("/")[-1]}')
+        msg.attach(part)
+
+    # Send the email using SMTP with SSL
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(from_email, password)
+            server.send_message(msg)
+            st.success("Email sent successfully!")
+    except Exception as e:
+        st.error(f"Error sending email: {e}")
+
+
 # Header information
 operator_id = st.text_input("Operator Email")
 date = st.date_input("Date")
@@ -243,32 +274,19 @@ if st.button("Submit"):
     doc.save(doc_stream)
     doc_stream.seek(0)
 
-    # Email configuration (retrieve credentials from Streamlit secrets)
-    sender_email = st.secrets["general"]["email"]
-    sender_password = st.secrets["general"]["email_password"]
+    # Email configuration
     recipient_email = operator_id  # Send to the operator's email
-
-    # Prepare the email
-    msg = MIMEMultipart()
-    msg['From'] = sender_email
-    msg['To'] = recipient_email
-    msg['Subject'] = 'ETI Performance Evaluation Form Summary'
-
-    # Attach the Word document
-    part = MIMEBase('application', 'octet-stream')
-    part.set_payload(doc_stream.read())
-    encoders.encode_base64(part)
-    part.add_header('Content-Disposition', 'attachment; filename="ETI_Evaluation_Summary.docx"')
-    msg.attach(part)
-
-    try:
-        # Connect to SMTP server (e.g., Gmail)
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(sender_email, sender_password)
-            server.sendmail(sender_email, recipient_email, msg.as_string())
-        st.success("Evaluation summary sent to the operator.")
-    except Exception as e:
-        st.error(f"Error sending email: {e}")
-
+    subject = "ETI Performance Evaluation Form Summary"
+    
+    # Define the email body message
+    body = """
+    <p>Hi,</p>
+    <p>Attached is the ETI Performance Evaluation Form Summary based on your recent performance assessment.</p>
+    <p>Please review the attached document for detailed feedback.</p>
+    <p>Best regards,<br>Your N4KIDS Team</p>
+    """
+    
+    # Send the email with attachment and custom body
+    send_email_with_attachment([recipient_email], subject, body, file_path=doc_stream)
 
 
