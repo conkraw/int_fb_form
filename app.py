@@ -10,7 +10,7 @@ from docx import Document
 # Title of the application
 st.title("ETI Performance Evaluation Form")
 
-def send_email_with_attachment(to_emails, subject, body, file_path):
+def send_email_with_attachment(to_emails, subject, body, file_stream):
     from_email = st.secrets["general"]["email"]
     password = st.secrets["general"]["email_password"]
 
@@ -23,13 +23,12 @@ def send_email_with_attachment(to_emails, subject, body, file_path):
     # Attach the email body (in HTML or plain text format)
     msg.attach(MIMEText(body, 'html'))  # 'html' or 'plain' depending on the content
 
-    # Attach the Word document
-    with open(file_path, 'rb') as attachment:
-        part = MIMEBase('application', 'octet-stream')
-        part.set_payload(attachment.read())
-        encoders.encode_base64(part)
-        part.add_header('Content-Disposition', f'attachment; filename={file_path.split("/")[-1]}')
-        msg.attach(part)
+    # Attach the Word document (file_stream is a BytesIO object)
+    part = MIMEBase('application', 'octet-stream')
+    part.set_payload(file_stream.read())  # Read directly from the BytesIO stream
+    encoders.encode_base64(part)
+    part.add_header('Content-Disposition', f'attachment; filename="ETI_Evaluation_Summary.docx"')
+    msg.attach(part)
 
     # Send the email using SMTP with SSL
     try:
@@ -39,7 +38,6 @@ def send_email_with_attachment(to_emails, subject, body, file_path):
             st.success("Email sent successfully!")
     except Exception as e:
         st.error(f"Error sending email: {e}")
-
 
 # Header information
 operator_id = st.text_input("Operator Email")
@@ -288,6 +286,6 @@ if st.button("Submit"):
     """
     
     # Send the email with attachment and custom body
-    send_email_with_attachment([recipient_email], subject, body, file_path=doc_stream)
+    send_email_with_attachment([recipient_email], subject, body, file_stream=doc_stream)
 
 
