@@ -244,8 +244,8 @@ if st.button("Submit"):
     doc_stream.seek(0)
 
     # Email configuration (retrieve credentials from Streamlit secrets)
-    sender_email = st.secrets["email"]["username"]
-    sender_password = st.secrets["email"]["password"]
+    sender_email = st.secrets["general"]["email"]
+    sender_password = st.secrets["general"]["email_password"]
     recipient_email = operator_id  # Send to the operator's email
 
     # Prepare the email
