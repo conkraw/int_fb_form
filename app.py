@@ -270,20 +270,72 @@ if st.button("Submit"):
     except Exception as e:
         st.error(f"Error sending email: {e}")
 
-    # Optional: Show the total score (can be computed based on the choices, adjust as needed)
-    total_score = sum(int(score.split("Score")[-1].strip()) for score in [
-        score1, score2, score3, score4, score5, score6, score7, score8,
-        score9, score10, score11, score12, score13, score14, score15,
-        score16, score17, score18, score19, score20, score21, score22
-    ])
+    response_scores = {
+    "Yes": 1,
+    "No": 0,
+    "Appropriate Force": 1,
+    "Excessive Force": 0,
+    "Insufficient Force": 0,
+    "Correct Order": 1,
+    "Incorrect Order": 0,
+    "First Attempt": 1,
+    "One Additional Attempt": 0,
+    "Two or More Attempts": 0,
+    "Intubation Unsuccessful": 0,
+    "No Contact": 1,
+    "Excessive Contact": 0,
+    "Tube Not Inserted": 0,
+    "Midline": 1,
+    "Not Midline": 0,
+    "Vocal Cords in View": 1,
+    "Vocal Cords Not in View": 0,
+    "Sufficient Lift": 1,
+    "Insufficient Lift": 0,
+    "Appropriate Angle (45°)": 1,
+    "Too Shallow": 0,
+    "Backward onto Teeth": 0,
+    "No Pinching": 1,
+    "Pinched Lips": 0,
+    "Appropriate Contact": 1,
+    "Excessive Contact": 0,
+}
     
-    #st.write(f"Total Score: {total_score}")
-    #if total_score >= 66:
-    #    st.success("The operator meets the base score requirements.")
-    #else:
-    #    st.warning("The operator did not meet the base score requirements.")
+   response_scores = {
+    "Yes": 1,
+    "No": 0,
+    "Appropriate Force": 1,
+    "Excessive Force": 0,
+    "Insufficient Force": 0,
+    "Correct Order": 1,
+    "Incorrect Order": 0,
+    "First Attempt": 1,
+    "One Additional Attempt": 0,
+    "Two or More Attempts": 0,
+    "Intubation Unsuccessful": 0,
+    "No Contact": 1,
+    "Excessive Contact": 0,
+    "Tube Not Inserted": 0,
+    "Midline": 1,
+    "Not Midline": 0,
+    "Vocal Cords in View": 1,
+    "Vocal Cords Not in View": 0,
+    "Sufficient Lift": 1,
+    "Insufficient Lift": 0,
+    "Appropriate Angle (45°)": 1,
+    "Too Shallow": 0,
+    "Backward onto Teeth": 0,
+    "No Pinching": 1,
+    "Pinched Lips": 0,
+    "Appropriate Contact": 1,
+    "Excessive Contact": 0,
+}
 
-
+# Calculate the total score based on the responses
+    total_score = 0
+    for score, response in responses.items():
+        total_score += response_scores.get(response, 0)  # Default to 0 if no match is found
+    
+    print(f"Total Score: {total_score}")
 
 
 
