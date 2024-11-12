@@ -277,11 +277,11 @@ if st.button("Submit"):
         score16, score17, score18, score19, score20, score21, score22
     ])
     
-    st.write(f"Total Score: {total_score}")
-    if total_score >= 66:
-        st.success("The operator meets the base score requirements.")
-    else:
-        st.warning("The operator did not meet the base score requirements.")
+    #st.write(f"Total Score: {total_score}")
+    #if total_score >= 66:
+    #    st.success("The operator meets the base score requirements.")
+    #else:
+    #    st.warning("The operator did not meet the base score requirements.")
 
 
 
