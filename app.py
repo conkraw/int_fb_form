@@ -1,5 +1,10 @@
-
 import streamlit as st
+from docx import Document
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
+from io import BytesIO
 
 # Title of the application
 st.title("ETI Performance Evaluation Form")
@@ -188,15 +193,98 @@ comments22 = st.text_area(
 
 # Submit button
 if st.button("Submit"):
-    # Calculate total score
+    # Generate Word document
+    doc = Document()
+    doc.add_heading('ETI Performance Evaluation Form Summary', 0)
+
+    # Add user input summary to the document
+    doc.add_paragraph(f"Operator Email: {operator_id}")
+    doc.add_paragraph(f"Reviewer Email: {reviewer_id}")
+    doc.add_paragraph(f"Date: {date}")
+    
+    doc.add_heading("Positioning of the Patient", level=1)
+    doc.add_paragraph(f"1. Positioning of Patient's Head: {score1}")
+    doc.add_paragraph(f"2. Elevation of Patient's Head: {score2}")
+
+    doc.add_heading("Insertion of Direct Laryngoscopy Blade", level=1)
+    doc.add_paragraph(f"3. Grip of Laryngoscope: {score3}")
+    doc.add_paragraph(f"4. Method to Open Mouth: {score4}")
+    doc.add_paragraph(f"5. Location of Blade: {score5}")
+    doc.add_paragraph(f"6. Blade Insertion with Respect to the Vallecula: {score6}")
+    doc.add_paragraph(f"7. Force Used while Interacting with Vallecula: {score7}")
+    doc.add_paragraph(f"8. Contact with Teeth During Lifting the Blade: {score8}")
+    doc.add_paragraph(f"9. Order of Events for the Insertion of the Laryngoscope: {score9}")
+
+    
+    doc.add_heading("Achieving the Optimal Laryngeal View", level=1)
+    doc.add_paragraph(f"10. Final Blade Position in the Vallecula When Lifting for Optimal View: {score10}")
+    doc.add_paragraph(f"11. Blade Position with Respect to the Oropharynx: {score11}")
+    doc.add_paragraph(f"12. Lift on Laryngoscope for Proper View: {score12}")
+    doc.add_paragraph(f"13. Quality of the Vocal Cords View: {score13}")
+    doc.add_paragraph(f"14. Angle of Lift on First Attempt: {score14}")
+    doc.add_paragraph(f"15. Multiple Blade Insertion Attempts to Achieve Proper View: {score15}")
+
+    doc.add_heading("Inserting the Endotracheal Tube", level=1) 
+    doc.add_paragraph(f"16. Number of Contacts of Tube During Insertion: {score16}")
+    doc.add_paragraph(f"17. Multiple Intubation Attempts: {score17}")
+
+    doc.add_heading("Avoiding Injury to the Patient", level=1)  
+    doc.add_paragraph(f"18. Was Excessive Force Used to Insert the Laryngoscope into the Oropharynx?: {score18}")
+    doc.add_paragraph(f"19. Was Excessive Force Used to Insert the ETT into the Oropharynx?: {score19}")
+    doc.add_paragraph(f"20. Was Excessive Force Used While Interacting with the Vocal Cords?: {score20}")
+    doc.add_paragraph(f"21. Laryngoscope Manipulation Around Lip(s): {score21}")
+    doc.add_paragraph(f"22. Laryngoscope and ETT Contact with Tissue and Structures: {score22}")
+
+    doc.add_heading("Comments", level=1)
+    doc.add_paragraph(f"Comments: {comments22}")
+
+    # Save the document to a BytesIO stream
+    doc_stream = BytesIO()
+    doc.save(doc_stream)
+    doc_stream.seek(0)
+
+    # Email configuration (retrieve credentials from Streamlit secrets)
+    sender_email = st.secrets["email"]["username"]
+    sender_password = st.secrets["email"]["password"]
+    recipient_email = operator_id  # Send to the operator's email
+
+    # Prepare the email
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = recipient_email
+    msg['Subject'] = 'ETI Performance Evaluation Form Summary'
+
+    # Attach the Word document
+    part = MIMEBase('application', 'octet-stream')
+    part.set_payload(doc_stream.read())
+    encoders.encode_base64(part)
+    part.add_header('Content-Disposition', 'attachment; filename="ETI_Evaluation_Summary.docx"')
+    msg.attach(part)
+
+    try:
+        # Connect to SMTP server (e.g., Gmail)
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, recipient_email, msg.as_string())
+        st.success("Evaluation summary sent to the operator.")
+    except Exception as e:
+        st.error(f"Error sending email: {e}")
+
+    # Optional: Show the total score (can be computed based on the choices, adjust as needed)
     total_score = sum(int(score.split("Score")[-1].strip()) for score in [
         score1, score2, score3, score4, score5, score6, score7, score8,
         score9, score10, score11, score12, score13, score14, score15,
         score16, score17, score18, score19, score20, score21, score22
     ])
     
-    st.write("Total Score:", total_score)
+    st.write(f"Total Score: {total_score}")
     if total_score >= 66:
         st.success("The operator meets the base score requirements.")
     else:
         st.warning("The operator did not meet the base score requirements.")
+
+
+
+
+
+
