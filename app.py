@@ -203,13 +203,13 @@ if st.button("Submit"):
     doc.add_paragraph(f"Date: {date}")
     
     doc.add_heading("Positioning of the Patient", level=1)
-    doc.add_paragraph(f"1. Positioning of Patient's Head: {score1}")
-    doc.add_paragraph(f"2. Elevation of Patient's Head: {score2}")
+    doc.add_paragraph(f"1. Did the Operator Position the Patient's Head Properly? {score1}")
+    doc.add_paragraph(f"2. Did the Operator Properly Elevate or Did Not Need to Elevate the Patient's Head? {score2}")
 
     doc.add_heading("Insertion of Direct Laryngoscopy Blade", level=1)
-    doc.add_paragraph(f"3. Grip of Laryngoscope: {score3}")
-    doc.add_paragraph(f"4. Method to Open Mouth: {score4}")
-    doc.add_paragraph(f"5. Location of Blade: {score5}")
+    doc.add_paragraph(f"3. The Operator Had a Proper Grip on the Laryngoscope. {score3}")
+    doc.add_paragraph(f"4. The Operator Adequately Opened the Mouth. {score4}")
+    doc.add_paragraph(f"5. Location of the Blade: {score5}")
     doc.add_paragraph(f"6. Blade Insertion with Respect to the Vallecula: {score6}")
     doc.add_paragraph(f"7. Force Used while Interacting with Vallecula: {score7}")
     doc.add_paragraph(f"8. Contact with Teeth During Lifting the Blade: {score8}")
