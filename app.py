@@ -1,10 +1,11 @@
-import streamlit as st
-from docx import Document
 import smtplib
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
+import streamlit as st
 from io import BytesIO
+from docx import Document
 
 # Title of the application
 st.title("ETI Performance Evaluation Form")
