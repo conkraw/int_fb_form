@@ -180,7 +180,7 @@ score22 = st.radio(
 
 # User input for comments after Question 22
 comments22 = st.text_area(
-    "Comments on Laryngoscope and ETT Contact with Tissue and Structures",
+    "Comments",
     "Please enter your comments here...",
     height=150,
     help="Provide feedback or observations regarding the contact of the laryngoscope and ETT with surrounding tissue and structures."
