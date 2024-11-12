@@ -5,10 +5,9 @@ import streamlit as st
 st.title("ETI Performance Evaluation Form")
 
 # Header information
-operator_id = st.text_input("Operator ID")
+operator_id = st.text_input("Operator Email")
 date = st.date_input("Date")
-trial_number = st.text_input("Trial Number")
-reviewer_id = st.text_input("Reviewer ID")
+reviewer_id = st.text_input("Reviewer Email")
 
 # Section for scoring
 st.subheader("Positioning of the Patient")
@@ -177,6 +176,14 @@ score22 = st.radio(
     "22. Laryngoscope and ETT Contact with Tissue and Structures",
     options=["Appropriate Contact", "Excessive Contact"],
     help="Feedback: Minimize contact with surrounding tissue."
+)
+
+# User input for comments after Question 22
+comments22 = st.text_area(
+    "Comments on Laryngoscope and ETT Contact with Tissue and Structures",
+    "Please enter your comments here...",
+    height=150,
+    help="Provide feedback or observations regarding the contact of the laryngoscope and ETT with surrounding tissue and structures."
 )
 
 # Submit button
